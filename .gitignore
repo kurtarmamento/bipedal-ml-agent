@@ -1,0 +1,8 @@
+.venv/
+venv/
+ENV/
+env/
+Library/
+Logs/
+Temp/
+UserSettings/
