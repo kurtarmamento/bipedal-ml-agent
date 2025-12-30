@@ -6,3 +6,8 @@ Library/
 Logs/
 Temp/
 UserSettings/
+results/
+Assets/Data/
+*.meta
+Assets/ML-Agents/
+Builds/

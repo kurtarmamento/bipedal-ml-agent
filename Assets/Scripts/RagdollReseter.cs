@@ -63,47 +63,41 @@ public class RagdollResetter : MonoBehaviour
 
     public void ResetRagdoll()
     {
-        // 1) Pause physics for all bodies
+        // A) pause physics
         foreach (var b in _bodies)
         {
             b.rb.isKinematic = true;
             b.rb.detectCollisions = false;
         }
 
-        // 2) Reset root (optional)
+        // B) reset transforms (DO NOT set velocity on kinematic bodies)
         if (resetToSpawnTransform)
         {
-            if (spawn != null)
-            {
-                transform.SetPositionAndRotation(spawn.position, spawn.rotation);
-            }
-            else
-            {
-                transform.SetPositionAndRotation(_rootPos0, _rootRot0);
-            }
+            if (spawn != null) transform.SetPositionAndRotation(spawn.position, spawn.rotation);
+            else transform.SetPositionAndRotation(_rootPos0, _rootRot0);
         }
 
-        // 3) Restore local poses + clear velocities
         foreach (var b in _bodies)
         {
             var t = b.rb.transform;
             t.localPosition = b.localPos;
             t.localRotation = b.localRot;
-
-            b.rb.linearVelocity = Vector3.zero;
-            b.rb.angularVelocity = Vector3.zero;
         }
 
-        // 4) Re-apply your constraint policy (Option 1)
         ApplyPlanarConstraintsOption1();
 
-        // 5) Resume physics
+        // C) resume physics (NOW it's valid to zero velocities)
         foreach (var b in _bodies)
         {
             b.rb.detectCollisions = true;
             b.rb.isKinematic = false;
+
+            b.rb.linearVelocity = Vector3.zero;
+            b.rb.angularVelocity = Vector3.zero;
+            b.rb.WakeUp();
         }
     }
+
 
     private void ApplyPlanarConstraintsOption1()
     {
